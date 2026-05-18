@@ -3,7 +3,7 @@ extends ../../layouts/default.pug
 include ../../mixins/box-head.pug
 
 block main
-
+    //- div #{products}
    
 
     .container.my-3
@@ -21,4 +21,6 @@ block main
                                 a(href=`/products/${item.slug}`) #{item.title}
                             .inner-price-new #{item.priceNew}$
                             .inner-price-old #{item.price}$
-                            .inner-discount #{item.discountPercent}%
+                            .inner-discount #{item.discountPercentage}%
+
+    

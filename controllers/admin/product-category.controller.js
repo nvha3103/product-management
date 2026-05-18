@@ -2,6 +2,7 @@ const ProductCategory = require("../../models/product-category.model")
 const searchHelper = require("../../helpers/search")
 
 const systemConfig = require("../../config/system")
+const createTree = require("../../helpers/createTree");
 
 module.exports.index = async (req, res) => {
     // console.log("req.query.status: ", req.query.status)
@@ -9,6 +10,8 @@ module.exports.index = async (req, res) => {
         deleted: false,
         // status: "active"
     }
+
+     
 
     // console.log("req.query: ", req.query);
 
@@ -32,24 +35,37 @@ module.exports.index = async (req, res) => {
     }
     // end sort
 
-    // console.log("👉 Lệnh sort đang là:", sort);
+    // console.log("Lệnh sort đang là:", sort);
     const records = await ProductCategory.find(find)
         .sort(sort)
 
+    const newRecords = createTree.tree(records);
+    console.log(newRecords);
     // console.log(records);
 
     res.render("admin/pages/product-category/index", {
         pageTitle: "Hà nguyễn",
-        records: records,
+        records: newRecords,
         keyword: objectSearch.keyword,
     })
 
     // res.send("OK!")
 }
 
-module.exports.create = (req, res) => {
+module.exports.create = async (req, res) => {
+    let find = {
+        deleted: false
+    }
+
+   
+
+    const records = await ProductCategory.find(find);
+    const newRecords = createTree.tree(records);
+
+    // console.log(newRecords);
     res.render("admin/pages/product-category/create", {
-        pageTitle: "Tạo danh mục"
+        pageTitle: "Tạo danh mục",
+        records: newRecords
     })
 }
 
@@ -62,6 +78,8 @@ module.exports.createPost = async (req, res) => {
     } else {
         req.body.position = parseInt(req.body.position);
     }
+
+    console.log(req.body);  
 
     const productCategory = new ProductCategory(req.body); // Dung new ProductCategory de tao ra 1 doi tuong moi, sau do goi phuong thuc save de luu vao database
 
@@ -88,7 +106,7 @@ module.exports.detail = async (req, res) => {
             product: product
         })
     } catch (error) {
-        // res.flash("error", "San pham khong ton tai hoac da bi xoa")
+        req.flash("error", "San pham khong ton tai hoac da bi xoa")
         res.redirect(`${systemConfig.prefixAdmin}/products-category`)
     }
 }
@@ -103,10 +121,15 @@ module.exports.edit = async (req, res) => {
 
         const product = await ProductCategory.findOne(find)
 
-        console.log("product: ", product);
+        // console.log("product: ", product);
+        const category = await ProductCategory.find({
+            deleted: false
+        })
+        const newCategory = createTreeHelper.tree(category);
         res.render("admin/pages/product-category/edit", {
             pageTitle: "Chinh sua danh muc",
-            product: product
+            product: product,
+            category: newCategory
         })
 
     }
@@ -117,7 +140,7 @@ module.exports.edit = async (req, res) => {
 
 // [PATCH] admin/products-category/detail/:id
 module.exports.editPatch = async (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
 
     req.body.position = parseInt(req.body.position);
 

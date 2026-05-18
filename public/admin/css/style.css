@@ -12,6 +12,16 @@
     color: #fff;
 }
 
+.header .inner-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.header .inner-actions .btn-danger {
+    color: #fff;
+    font-weight: 600;
+}
+
 .body .sider {
     width: 150px;
     height: 100%;

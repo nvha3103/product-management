@@ -6,6 +6,7 @@ var path = require('path');
 const cookieParser = require("cookie-parser")
 const session = require("express-session")
 const flash = require("connect-flash");
+const moment = require("moment")
 
 const bodyParser = require("body-parser")
 // import route ben client
@@ -56,7 +57,7 @@ app.set("view engine", "pug");
 
 // App locals Variables -> khi nay tat ca cac file pug deu co the su dung bien nay
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
-
+app.locals.moment = moment; // de co the su dung duoc moment trong tat ca cac file .pug
 // Vi deploy len online no khong hieu bien public laf gi nen phai su dung  __dirname(se cho biet cau truc project)
 // app.use(express.static("public"))
 

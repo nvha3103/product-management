@@ -13,7 +13,7 @@ module.exports.index = async (req, res) => {
         return item;
     })
 
-    console.log(products);
+    // console.log(products);
 
     res.render("client/pages/products/index", {
         pageTitle: "Danh sach san pham",
@@ -47,7 +47,7 @@ module.exports.detail = async (req, res) => {
             product: product
         })
     } catch (error) {
-        res.flash("error", "San pham khong ton tai hoac da bi xoa")
+        // res.flash("error", "San pham khong ton tai hoac da bi xoa")
         res.redirect(`/products`)
     }
 }

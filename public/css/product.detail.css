@@ -1,0 +1,120 @@
+/* Tổng thể khung chứa */
+.product-detail {
+    background: #fff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+/* Ảnh sản phẩm mượt mà */
+.product-detail .inner-thumb img {
+    width: 100%;
+    height: auto;
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+}
+
+.product-detail .inner-thumb:hover img {
+    transform: scale(1.02);
+}
+
+/* Tiêu đề sản phẩm */
+.product-detail .inner-title {
+    font-size: 36px;
+    font-weight: 700;
+    color: #2d3436;
+    margin-bottom: 25px;
+    line-height: 1.2;
+}
+
+/* Khu vực giá */
+.product-detail .inner-price-group {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.product-detail .inner-price-new {
+    font-size: 32px;
+    color: #d63031;
+    font-weight: 800;
+}
+
+.product-detail .inner-price-old {
+    font-size: 18px;
+    color: #b2bec3;
+    text-decoration: line-through;
+}
+
+.product-detail .inner-discount {
+    background: #ff7675;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 5px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Các thông tin phụ */
+.product-detail .inner-info {
+    margin-bottom: 12px;
+    font-size: 16px;
+    color: #636e72;
+}
+
+.product-detail .inner-info b {
+    color: #2d3436;
+}
+
+.product-detail .status-stock {
+    color: #00b894 !important;
+    /* Màu xanh lá cho 'Còn hàng' */
+}
+
+/* Mô tả sản phẩm */
+.product-detail .inner-desc {
+    margin-top: 30px;
+}
+
+.product-detail .inner-desc h4 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: #2d3436;
+    position: relative;
+    padding-left: 15px;
+}
+
+.product-detail .inner-desc h4::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 5px;
+    bottom: 5px;
+    width: 4px;
+    background: #d63031;
+    border-radius: 10px;
+}
+
+.product-detail .inner-desc .inner-text {
+    color: #636e72;
+    line-height: 1.8;
+    font-size: 15px;
+}
+
+/* Nút bấm mua hàng */
+.product-detail .btn-danger {
+    background-color: #d63031;
+    border: none;
+    padding: 15px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.product-detail .btn-danger:hover {
+    background-color: #c0392b;
+    box-shadow: 0 5px 15px rgba(214, 48, 49, 0.4);
+}

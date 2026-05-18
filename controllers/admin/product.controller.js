@@ -3,7 +3,10 @@ const searchHelper = require("../../helpers/search")
 const paginationHelper = require("../../helpers/pagination")
 const filterStatusHelper = require("../../helpers/filterStatus")
 const Product = require("../../models/product.model")
+const ProductCategory = require("../../models/product-category.model")
 const systemConfig = require("../../config/system")
+const createTreeHelper = require("../../helpers/createTree");
+const Account = require("../../models/account.model")
 
 module.exports.index = async (req, res) => {
     // console.log(req.query.status)
@@ -55,6 +58,23 @@ module.exports.index = async (req, res) => {
         .skip(objectPagination.skip)
 
     // console.log(products)
+    for (const product of products) {
+        const user = await Account.findOne({
+            _id: product.createdBy.account_id
+        })
+        if (user) {
+            product.accountFullName = user.fullName;
+        }
+        // // console.log(product.updateBy[product.updateBy.length - 1]);
+        // console.log(product.title + " updateBy: ", product.updatedBy);
+        const updateBy = product.updatedBy.slice(-1)[0];
+        if (updateBy) {
+            const userUpdated = await Account.findOne({
+                _id: updateBy.account_id
+            })
+            updateBy.accountFullName = userUpdated.fullName;
+        }
+    }
 
     res.render("admin/pages/products/index", {
         pageTitle: "Danh sach san pham ",
@@ -72,8 +92,15 @@ module.exports.changeStatus = async (req, res) => {
     const status = req.params.status
     const id = req.params.id
 
+    const updatedBy = {
+        account_id: res.locals.user.id,
+        updatedAt: new Date()
+    }
+
     await Product.updateOne({ _id: id }, {
-        status: status
+        status: status,
+
+        $push: { updatedBy: updatedBy }
     });
 
     req.flash("success", "Cap nhat trang thai san pham thanh cong")
@@ -87,18 +114,22 @@ module.exports.changeMulti = async (req, res) => {
     console.log("req: ", req.body);
     const type = req.body.type;
     const ids = req.body.ids.split(", ");
+    const updatedBy = {
+        account_id: res.locals.user.id,
+        updatedAt: new Date()
+    }
 
     switch (type) {
         case "active":
-            await Product.updateMany({ _id: { $in: ids } }, { status: "active" })
+            await Product.updateMany({ _id: { $in: ids } }, { status: "active", $push: { updatedBy: updatedBy } })
             req.flash("success", `Cap nhat trang thai thanh cong ${ids.length}san pham`)
             break
         case "inactive":
-            await Product.updateMany({ _id: { $in: ids } }, { status: "inactive" })
+            await Product.updateMany({ _id: { $in: ids } }, { status: "inactive", $push: { updatedBy: updatedBy } })
             req.flash("success", `Cap nhat trang thai thanh cong ${ids.length}san pham`)
             break;
         case "delete-all":
-            await Product.updateMany({ _id: { $in: ids } }, { deleted: true, deletedAt: new Date() })
+            await Product.updateMany({ _id: { $in: ids } }, { deletedBy: { account_id: res.local.user.id, deletedAt: new Date() } })
             req.flash("success", `Cap nhat xoa thanh cong ${ids.length} san pham`)
             break;
         case "change-position":
@@ -107,7 +138,8 @@ module.exports.changeMulti = async (req, res) => {
                 position = parseInt(position)
                 // console.log(item.split("-"))
                 await Product.updateOne({ _id: id }, {
-                    position: position
+                    position: position,
+                    $push: { updatedBy: updatedBy }
                 });
 
             }
@@ -129,20 +161,38 @@ module.exports.deleteItem = async (req, res) => {
     const id = req.params.id;
 
     // await Product.deleteOne({ _id: id });  --> day la phan xoa cung
-    await Product.updateOne({ _id: id }, { deleted: true, deletedAt: new Date() }); // => day la phan xoa mem 
+    await Product.updateOne(
+        { _id: id },
+        {
+            deleted: true,
+            deletedAt: {
+                account_id: res.local.user.id,
+                deletedAt: new Date()
+            }
+        }); // => day la phan xoa mem 
 
     res.redirect("/admin/products")
 };
 
 // [GET] /admin/products/create
 module.exports.create = async (req, res) => {
+    let find = {
+        deleted: false
+    };
+
+    const category = await ProductCategory.find(find)
+    const newCategory = createTreeHelper.tree(category);
+
+
     res.render("admin/pages/products/create", {
-        pageTitle: "Tao moi san pham"
+        pageTitle: "Tao moi san pham",
+        category: newCategory
     })
 }
 
 // [POST] /admin/products/create
 module.exports.createPost = async (req, res) => {
+
     req.body.price = parseInt(req.body.price);
     req.body.discountPercentage = parseInt(req.body.discountPercentage);
     req.body.stock = parseInt(req.body.stock);
@@ -155,6 +205,9 @@ module.exports.createPost = async (req, res) => {
         req.body.position = parseInt(req.body.position);
     }
 
+    req.body.createdBy = {
+        account_id: res.locals.user.id
+    }
     // if (req.file) {
     //     req.body.thumnail = `/uploads/${req.file.filename}`;
     //     // console.log(req.body);
@@ -177,11 +230,13 @@ module.exports.edit = async (req, res) => {
         }
 
         const product = await Product.findOne(find)
-
+        const category = await ProductCategory.find({ deleted: false })
+        newCategory = createTreeHelper.tree(category)
         console.log("product: ", product);
         res.render("admin/pages/products/edit", {
             pageTitle: "Chinh sua san pham",
-            product: product
+            product: product,
+            category: newCategory
         })
     } catch (error) {
         res.flash("error", "San pham khong ton tai hoac da bi xoa")
@@ -204,9 +259,18 @@ module.exports.editPatch = async (req, res) => {
     }
 
     try {
+
+        const updatedBy = {
+            account_id: res.locals.user.id,
+            updatedAt: new Date()
+        }
+
         await Product.updateOne({
             _id: req.params.id
-        }, req.body);
+        }, {
+            ...req.body,
+            $push: { updatedBy: updatedBy }
+        });
 
         req.flash("success", "Cap nhat san pham thanh cong")
     } catch (error) {

@@ -1,0 +1,27 @@
+extends ../../layouts/auth.pug
+
+block main
+    h2 Đăng nhập hệ thống
+    
+    if error && error.length
+        each err in error
+            .alert.alert-danger= err
+    
+    if success && success.length
+        each suc in success
+            .alert.alert-success= suc
+    
+    form(action=`${prefixAdmin}/auth/login`, method="POST")
+        .form-group
+            label Email
+            input.form-control(type="email", name="email", placeholder="Nhập email", required)
+        
+        .form-group
+            label Mật khẩu
+            input.form-control(type="password", name="password", placeholder="Nhập mật khẩu", required)
+        
+        button.btn.btn-primary(type="submit") Đăng nhập
+
+    .auth-footer
+        p Chưa có tài khoản? 
+            a(href=`${prefixAdmin}/auth/register`) Đăng ký ngay
