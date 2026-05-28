@@ -106,7 +106,7 @@ module.exports.changeStatus = async (req, res) => {
     req.flash("success", "Cap nhat trang thai san pham thanh cong")
 
     // res.send(`${status} - ${id}`)
-    res.redirect(`/${systemConfig.prefixAdmin}/products`);
+    res.redirect(`${systemConfig.prefixAdmin}/products`);
 };
 
 // [PATCH] /admin/products/change-multi

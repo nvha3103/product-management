@@ -21,7 +21,7 @@ const database = require("./config/database")
 
 
 
-const port = process.env.PORT
+const port = process.env.PORT || 3000;
 
 // use TinyMce
 app.use('/tinymce', express.static(path.join(__dirname, 'node_modules', 'tinymce')));
@@ -66,6 +66,10 @@ app.use(express.static(`${__dirname}/public`))
 routeAdmin(app)
 routeClient(app)
 
-app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-})
+if (require.main === module) {
+    app.listen(port, () => {
+        console.log(`Example app listening on port ${port}`)
+    })
+}
+
+module.exports = app;
