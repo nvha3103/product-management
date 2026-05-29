@@ -47,10 +47,6 @@ app.use((req, res, next) => {
     next();
 });
 
-database.connect();
-
-
-
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "pug");
 
@@ -62,6 +58,15 @@ app.locals.moment = moment; // de co the su dung duoc moment trong tat ca cac fi
 // app.use(express.static("public"))
 
 app.use(express.static(`${__dirname}/public`))
+
+app.use(async (req, res, next) => {
+    try {
+        await database.connect();
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
 
 routeAdmin(app)
 routeClient(app)
