@@ -59,14 +59,17 @@ module.exports.index = async (req, res) => {
 
     // console.log(products)
     for (const product of products) {
+        // Lay ra thong tin nguoi tao san pham
         const user = await Account.findOne({
             _id: product.createdBy.account_id
         })
         if (user) {
             product.accountFullName = user.fullName;
         }
+
         // // console.log(product.updateBy[product.updateBy.length - 1]);
         // console.log(product.title + " updateBy: ", product.updatedBy);
+        // Lay ra thong tin nguoi cap nhat san pham lan cuoi cung
         const updateBy = product.updatedBy.slice(-1)[0];
         if (updateBy) {
             const userUpdated = await Account.findOne({

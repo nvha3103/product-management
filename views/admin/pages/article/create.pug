@@ -3,14 +3,14 @@ include ../../mixins/alert.pug
 include ../../mixins/select-tree.pug
 
 block main
-    if(role.permissions.includes("products_create"))
+        //- if(role.permissions.includes("products_create"))
         +alert-error(1000)
 
-        h1(class="mb-45") Thêm mới sản phẩm
+        h1(class="mb-45") Thêm mới bài viết
 
         form(
-            action=`${prefixAdmin}/products/create`
-            id="form-create-product"
+            action=`${prefixAdmin}/articles/create`
+            id="form-create-article"
             method="POST"
             enctype="multipart/form-data" 
         )
@@ -23,79 +23,14 @@ block main
                     name="title"
                     
                 )
-            
-            
-            
-            div(class="form-group")
-                label(for="product_category_id") Danh mục 
-                select(
-                    class="form-control"
-                    id="product_category_id"
-                    name="product_category_id"
-                )
-                    option(value="") Chọn danh mục--
-                    if(category)
-                        +select-tree(category)
-            
-            div(class="form-group form-check form-check-inline")
-                input(
-                    type="radio"
-                    class="form-check-input"
-                    id="featured1"
-                    name="featured"
-                    value="1"
-                )
-                label(for="featured1" class="form-check-label") Nổi bật 
-
-            div(class="form-group form-check form-check-inline")
-                input(
-                    type="radio"
-                    class="form-check-input"
-                    id="featured"
-                    name="featured"
-                    value="0"
-                    checked
-                )
-                label(for="featured" class="form-check-label") Không nổi bật
 
             div(class="form-group")
-                label(for="desc") Mô tả
+                label(for="desc") Nội dung
                 textarea(
                     class="form-control textarea-tinymce"
                     id="desc"
-                    name="description"
+                    name="content"
                     rows="5"
-                )
-            div(class="form-group")
-                label(for="price") Giá
-                input(
-                    type="number"
-                    class="form-control"
-                    id="price"
-                    name="price"
-                
-                    min="0"
-                )
-            div(class="form-group")
-                label(for="discount") % Giảm giá
-                input(
-                    type="number"
-                    class="form-control"
-                    id="discount"
-                    name="discountPercentage"
-                    value="0"
-                    min="0"
-                )
-            div(class="form-group")
-                label(for="stock") Số lượng
-                input(
-                    type="number"
-                    class="form-control"
-                    id="stock"
-                    name="stock"
-                
-                    min="0"
-                    value="0"
                 )
 
             div(
@@ -153,4 +88,4 @@ block main
             div(class="form-group")
                 button(type="submit" class="btn btn-primary") Tao moi
             
-        script (src="/admin/js/product.js")
+        //- script (src="/admin/js/product.js")

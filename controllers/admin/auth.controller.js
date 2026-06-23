@@ -5,6 +5,15 @@ const generate = require("../../models/helpers/generate");
 const systemConfig = require("../../config/system");
 const loginPath = `${systemConfig.prefixAdmin}/auth/login`;
 const registerPath = `${systemConfig.prefixAdmin}/auth/register`;
+const authCookieOptions = {
+    httpOnly: true,
+    path: "/",
+    maxAge: 24 * 60 * 60 * 1000
+};
+const clearAuthCookieOptions = {
+    httpOnly: true,
+    path: "/"
+};
 
 // GET /admin/auth/login
 module.exports.login = async (req, res) => {
@@ -46,11 +55,8 @@ module.exports.loginPost = async (req, res) => {
             await user.save();
         }
 
-        res.cookie("token", user.token, {
-            httpOnly: true,
-            path: "/",
-            maxAge: 24 * 60 * 60 * 1000
-        });
+        res.cookie("token", user.token, authCookieOptions);
+        res.cookie("userId", user._id.toString(), authCookieOptions);
         res.redirect(`${systemConfig.prefixAdmin}/dashboard`);
     } catch (error) {
         req.flash("error", "Có lỗi xảy ra, vui lòng thử lại!");
@@ -112,9 +118,7 @@ module.exports.registerPost = async (req, res) => {
 }
 
 module.exports.logout = (req, res) => {
-    res.clearCookie("token", {
-        httpOnly: true,
-        path: "/"
-    });
+    res.clearCookie("token", clearAuthCookieOptions);
+    res.clearCookie("userId", clearAuthCookieOptions);
     res.redirect(`${systemConfig.prefixAdmin}/auth/login`);
 }

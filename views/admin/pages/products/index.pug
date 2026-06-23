@@ -98,8 +98,7 @@ block main
                         img(
                             src = item.thumbnail
                             alt= item.title
-                            width= "100px"
-                            height="auto"
+                            style="width: 80px; height: 80px"
                         )
                     td #{item.title}
                     td #{item.price}$
@@ -138,7 +137,7 @@ block main
                         if(item.updatedBy.length > 0)
                             p #{item.updatedBy[item.updatedBy.length - 1].accountFullName}
                             p
-                                +formatDate(item.updatedBy[item.updatedBy.length - 1].updatedAt)
+                                +formatDateTime(item.updatedBy[item.updatedBy.length - 1].updatedAt)
                     td 
                         a(
                             href= `${prefixAdmin}/products/detail/${item.id}`

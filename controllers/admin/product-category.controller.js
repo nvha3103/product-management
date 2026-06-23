@@ -11,7 +11,7 @@ module.exports.index = async (req, res) => {
         // status: "active"
     }
 
-     
+
 
     // console.log("req.query: ", req.query);
 
@@ -57,7 +57,7 @@ module.exports.create = async (req, res) => {
         deleted: false
     }
 
-   
+
 
     const records = await ProductCategory.find(find);
     const newRecords = createTree.tree(records);
@@ -71,22 +71,29 @@ module.exports.create = async (req, res) => {
 
 // [POST] /admin/products-category/create
 module.exports.createPost = async (req, res) => {
-    if (req.body.position == "") {
-        const countProducts = await ProductCategory.countDocuments();
-        req.body.position = countProducts + 1;
-        console.log(countProducts);
+    const permission = res.locals.role.permissions;
+    // console.log("permission: ", permission);
+    if (permission.includes("products-category_create")) {
+        console.log("Co quyen")
+        if (req.body.position == "") {
+            const countProducts = await ProductCategory.countDocuments();
+            req.body.position = countProducts + 1;
+            console.log(countProducts);
+        } else {
+            req.body.position = parseInt(req.body.position);
+        }
+
+        console.log(req.body);
+
+        const productCategory = new ProductCategory(req.body); // Dung new ProductCategory de tao ra 1 doi tuong moi, sau do goi phuong thuc save de luu vao database
+
+        await productCategory.save();
+
+        res.redirect('/admin/products-category')
     } else {
-        req.body.position = parseInt(req.body.position);
+        console.log("Khong co quyen")
+        return;
     }
-
-    console.log(req.body);  
-
-    const productCategory = new ProductCategory(req.body); // Dung new ProductCategory de tao ra 1 doi tuong moi, sau do goi phuong thuc save de luu vao database
-
-    await productCategory.save();
-
-    res.redirect('/admin/products-category')
-
 }
 
 module.exports.detail = async (req, res) => {

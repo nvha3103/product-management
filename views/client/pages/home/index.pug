@@ -1,5 +1,18 @@
 extends ../../layouts/default.pug
+include ../../mixins/box-head.pug
+include ../../mixins/product-layout.pug
+include ../../mixins/alert.pug
 block main
-    h1 Trang chu
 
-    div #{layoutProductsCategory}
+    .container.my-3
+        .row
+            .col-12
+                +box-head("Sản phẩm nổi bật")
+        +product-grid(productsFeatured)
+
+    .container.my-3
+        .row
+            .col-12
+                +box-head("Sản phẩm mới")
+
+        +product-grid(productNew)
